@@ -11,42 +11,33 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-// Initialize connections (runs once per Lambda instance)
-func init() {
-	// Add DB/API clients here later
-	log.Println("Initializing Lambda")
+// Shared business logic
+func generateResponse(message string) string {
+	return fmt.Sprintf("Hello from %s!", message)
 }
 
-// Local development handler
+// Local handler (unchanged)
 func localHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello from Go! (Local)\nPath: %s\n", r.URL.Path)
+	fmt.Fprint(w, generateResponse("Local Go Server"))
 }
 
-// Lambda handler with full request/response support
+// Lambda handler
 func lambdaHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	response := events.APIGatewayProxyResponse{
+	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Headers:    map[string]string{"Content-Type": "text/plain"},
-		Body: fmt.Sprintf(
-			"Hello from Lambda!\nPath: %s\nQuery: %v\n",
-			request.Path,
-			request.QueryStringParameters,
-		),
-	}
-	return response, nil
+		Body:       generateResponse("AWS Lambda"),
+	}, nil
 }
 
 func main() {
-	// Check if running in Lambda (with fallback for SAM local)
-	isLambda := os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != "" || os.Getenv("AWS_EXECUTION_ENV") != ""
-
-	if !isLambda {
-		// Local mode
+	// Auto-detect environment
+	if os.Getenv("AWS_LAMBDA_FUNCTION_NAME") == "" {
+		// Local
 		http.HandleFunc("/", localHandler)
-		log.Println("Starting local server on :8080")
+		log.Println("Running locally on :8080")
 		log.Fatal(http.ListenAndServe(":8080", nil))
 	} else {
-		// Lambda mode
+		// Lambda
 		lambda.Start(lambdaHandler)
 	}
 }
