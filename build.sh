@@ -12,3 +12,5 @@ ls -lh function.zip
 
 # Cleanup (optional)
 rm bootstrap
+
+echo "Lambda package ready: function.zip"
