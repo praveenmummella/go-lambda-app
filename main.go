@@ -32,7 +32,7 @@ func lambdaHandler(ctx context.Context, request events.APIGatewayProxyRequest) (
     // Prepare the response (matches your local output format)
     return events.APIGatewayProxyResponse{
         StatusCode: 200,
-        Body:       fmt.Sprintf("Hello from AWS Lambda!\nPath: %s\n", path),
+        Body:       fmt.Sprintf("Hello from Infovision AWS Lambda!\nPath: %s\n", path),
     }, nil
 }
 
