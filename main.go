@@ -13,7 +13,7 @@ import (
 
 // Shared business logic
 func generateResponse(message string) string {
-	return fmt.Sprintf("Hello from %s!", message)
+	return fmt.Sprintf("Hello from Infovision %s!", message)
 }
 
 // Local handler (unchanged)
