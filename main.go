@@ -23,10 +23,17 @@ func localHandler(w http.ResponseWriter, r *http.Request) {
 
 // Lambda handler
 func lambdaHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
-		Body:       generateResponse("AWS Lambda"),
-	}, nil
+    // Get the path from the request
+    path := request.Path
+    if path == "" {
+        path = "/"  // Default to root path
+    }
+
+    // Prepare the response (matches your local output format)
+    return events.APIGatewayProxyResponse{
+        StatusCode: 200,
+        Body:       fmt.Sprintf("Hello from Lambda!\nPath: %s\n", path),
+    }, nil
 }
 
 func main() {
